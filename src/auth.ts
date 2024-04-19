@@ -7,29 +7,9 @@ import { getLogger } from './services/helpers/logger.js'
 
 const serverOptions = (mainHandler: Main): ServerOptions => {
     const log = getLogger({})
-    const app = express();
-    const port = 3000; // You can change this to your preferred port
-
-    // Resolve the absolute path to the 'static' directory
-    const staticDir = path.resolve('static');
-
-    // Serve static files from the 'static' directory
-    app.use(express.static(staticDir));
-
-    app.get('/', (req, res) => {
-      res.sendFile(path.join(staticDir, 'setup.html'));
-    });
-
-    app.get('/connect', (req, res) => {
-        res.sendFile(path.join(staticDir, 'connect.html'));
-      });
-
-    app.listen(port, () => {
-      console.log(`Web view is running at http://localhost:${port}`);
-    });
-
     return {
         logger: { log, error: err => log("ERROR", err) },
+        staticFiles: path.resolve('static'),
         AdminAuthGuard: adminAuth,
         MetricsAuthGuard: metricsAuth,
         AppAuthGuard: async (authHeader) => { return { app_id: mainHandler.applicationManager.DecodeAppToken(stripBearer(authHeader)) } },
